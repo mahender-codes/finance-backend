@@ -10,11 +10,11 @@ import com.mahender.finance.dto.RecordResponseDto;
 
 public interface DashboardService {
 
-    ResponseEntity<ResponseStructure<Map<Long, DashboardSummaryDto>>> getSummary(Long requestedBy);
+	ResponseEntity<ResponseStructure<Map<Long, DashboardSummaryDto>>> getSummary();
 
-    ResponseEntity<ResponseStructure<Map<String, Double>>> getCategoryWise(Long userId, Long requestedBy);
+	ResponseEntity<ResponseStructure<Map<String, Double>>> getCategoryWise(Long userId);
 
-	ResponseEntity<ResponseStructure<List<RecordResponseDto>>> getRecentRecords(Long requestedBy);
+	ResponseEntity<ResponseStructure<List<RecordResponseDto>>> getRecentRecords();
 
-	ResponseEntity<ResponseStructure<List<MonthlyTrendResponseDto>>> getMonthlyData(Long requestedBy);
+	ResponseEntity<ResponseStructure<List<MonthlyTrendResponseDto>>> getMonthlyData();
 }

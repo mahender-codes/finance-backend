@@ -19,10 +19,6 @@ import com.mahender.finance.dto.DashboardSummaryDto;
 import com.mahender.finance.dto.MonthlyTrendResponseDto;
 import com.mahender.finance.dto.RecordResponseDto;
 import com.mahender.finance.enums.RecordType;
-import com.mahender.finance.enums.Role;
-import com.mahender.finance.exception.UnauthorizedException;
-import com.mahender.finance.exception.UserInactiveException;
-import com.mahender.finance.exception.UserNotFoundException;
 import com.mahender.finance.model.FinancialRecord;
 import com.mahender.finance.model.User;
 import com.mahender.finance.repository.RecordRepository;
@@ -38,9 +34,7 @@ public class DashboardServiceImpl implements DashboardService {
 	private RecordRepository recordRepository;
 
 	@Override
-	public ResponseEntity<ResponseStructure<Map<Long, DashboardSummaryDto>>> getSummary(Long requestedBy) {
-
-		getValidatedUser(requestedBy);
+	public ResponseEntity<ResponseStructure<Map<Long, DashboardSummaryDto>>> getSummary() {
 
 		List<FinancialRecord> records = recordRepository.findByDeletedFalse();
 		Map<Long, DashboardSummaryDto> map = new HashMap<>();
@@ -73,7 +67,6 @@ public class DashboardServiceImpl implements DashboardService {
 			else
 				dto.setTotalExpenses(dto.getTotalExpenses() + record.getAmount());
 
-			// update balance after changes
 			dto.setNetBalance(dto.getTotalIncome() - dto.getTotalExpenses());
 		}
 
@@ -82,11 +75,7 @@ public class DashboardServiceImpl implements DashboardService {
 	}
 
 	@Override
-	public ResponseEntity<ResponseStructure<Map<String, Double>>> getCategoryWise(Long userId, Long requestedBy) {
-
-		User requestedUser = getValidatedUser(requestedBy);
-		if (requestedUser.getRole() != Role.ANALYST && requestedUser.getRole() != Role.ADMIN)
-			throw new UnauthorizedException("Access denied, you're not allowed for this operation");
+	public ResponseEntity<ResponseStructure<Map<String, Double>>> getCategoryWise(Long userId) {
 
 		List<FinancialRecord> records = recordRepository.findByCreatedByAndDeletedFalse(userId);
 		Map<String, Double> map = new HashMap<>();
@@ -110,11 +99,7 @@ public class DashboardServiceImpl implements DashboardService {
 	}
 
 	@Override
-	public ResponseEntity<ResponseStructure<List<RecordResponseDto>>> getRecentRecords(Long requestedBy) {
-
-		User requestedUser = getValidatedUser(requestedBy);
-		if (requestedUser.getRole() != Role.ANALYST && requestedUser.getRole() != Role.ADMIN)
-			throw new UnauthorizedException("Access denied, you're not allowed for this operation");
+	public ResponseEntity<ResponseStructure<List<RecordResponseDto>>> getRecentRecords() {
 
 		List<FinancialRecord> records = recordRepository.findByDeletedFalse();
 
@@ -123,7 +108,6 @@ public class DashboardServiceImpl implements DashboardService {
 					new ArrayList<>()));
 		}
 
-		// filter null dates before sorting, map to DTO
 		List<RecordResponseDto> recentRecords = records.stream().filter(r -> r.getDate() != null)
 				.sorted(Comparator.comparing(FinancialRecord::getDate).reversed()).limit(5).map(this::mapToDto)
 				.toList();
@@ -133,11 +117,7 @@ public class DashboardServiceImpl implements DashboardService {
 	}
 
 	@Override
-	public ResponseEntity<ResponseStructure<List<MonthlyTrendResponseDto>>> getMonthlyData(Long requestedBy) {
-
-		User requestedUser = getValidatedUser(requestedBy);
-		if (requestedUser.getRole() != Role.ANALYST && requestedUser.getRole() != Role.ADMIN)
-			throw new UnauthorizedException("Access denied, you're not allowed for this operation");
+	public ResponseEntity<ResponseStructure<List<MonthlyTrendResponseDto>>> getMonthlyData() {
 
 		List<FinancialRecord> records = recordRepository.findByDeletedFalse();
 		Map<String, MonthlyTrendResponseDto> map = new HashMap<>();
@@ -171,16 +151,6 @@ public class DashboardServiceImpl implements DashboardService {
 
 		return ResponseEntity.ok(new ResponseStructure<>(HttpStatus.OK.value(),
 				"Monthly records retrieved successfully.", responseDtos));
-	}
-
-	private User getValidatedUser(Long requestedBy) {
-		User user = userRepository.findById(requestedBy)
-				.orElseThrow(() -> new UserNotFoundException("User not found with the given ID " + requestedBy));
-
-		if (!user.getStatus())
-			throw new UserInactiveException("Your account is inactive. Please contact admin.");
-
-		return user;
 	}
 
 	private RecordResponseDto mapToDto(FinancialRecord record) {

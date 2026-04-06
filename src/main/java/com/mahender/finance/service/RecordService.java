@@ -12,17 +12,16 @@ import com.mahender.finance.enums.RecordType;
 
 public interface RecordService {
 
-	ResponseEntity<ResponseStructure<RecordResponseDto>> createRecord(RecordRequestDto request, Long requestedBy);
+	ResponseEntity<ResponseStructure<RecordResponseDto>> createRecord(RecordRequestDto request, Long userId);
 
-	ResponseEntity<ResponseStructure<List<RecordResponseDto>>> getAllRecords(Long requestedBy);
+	ResponseEntity<ResponseStructure<List<RecordResponseDto>>> getAllRecords(int page, int size);
 
-	ResponseEntity<ResponseStructure<RecordResponseDto>> getRecordById(Long id, Long requestedBy);
+	ResponseEntity<ResponseStructure<RecordResponseDto>> getRecordById(Long id);
 
-	ResponseEntity<ResponseStructure<RecordResponseDto>> updateRecord(Long id, RecordRequestDto request,
-			Long requestedBy);
+	ResponseEntity<ResponseStructure<RecordResponseDto>> updateRecord(Long id, RecordRequestDto request);
 
-	ResponseEntity<?> deleteRecord(Long id, Long requestedBy);
+	ResponseEntity<?> deleteRecord(Long id);
 
-	ResponseEntity<ResponseStructure<List<RecordResponseDto>>> filterRecords(Long requestedBy, RecordType type,
-			String category, LocalDate startDate, LocalDate endDate);
+	ResponseEntity<ResponseStructure<List<RecordResponseDto>>> filterRecords(RecordType type, String category,
+			LocalDate startDate, LocalDate endDate);
 }

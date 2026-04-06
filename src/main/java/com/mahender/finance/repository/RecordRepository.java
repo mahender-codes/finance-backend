@@ -3,6 +3,8 @@ package com.mahender.finance.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,5 +17,7 @@ public interface RecordRepository extends JpaRepository<FinancialRecord, Long> {
 	List<FinancialRecord> findByDeletedFalse();
 
 	Optional<FinancialRecord> findByIdAndDeletedFalse(Long id);
+
+	Page<FinancialRecord> findByDeletedFalse(Pageable pageable);
 
 }

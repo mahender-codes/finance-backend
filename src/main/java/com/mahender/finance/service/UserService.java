@@ -9,11 +9,11 @@ import com.mahender.finance.dto.UserResponseDto;
 public interface UserService {
 	ResponseEntity<ResponseStructure<UserResponseDto>> createUser(UserRequestDto request);
 
-	ResponseEntity<ResponseStructure<List<UserResponseDto>>> getAllUsers(Long requestedBy);
+	ResponseEntity<ResponseStructure<List<UserResponseDto>>> getAllUsers();
 
-	ResponseEntity<ResponseStructure<UserResponseDto>> getUserById(Long id, Long requestedBy);
+	ResponseEntity<ResponseStructure<UserResponseDto>> getUserById(Long id);
 
-	ResponseEntity<ResponseStructure<UserResponseDto>> updateUser(Long id, UserRequestDto request, Long requestedBy);
+	ResponseEntity<ResponseStructure<UserResponseDto>> updateUser(Long id, UserRequestDto request);
 
-	ResponseEntity<ResponseStructure<UserResponseDto>> changeStatus(Long userId, Long requestedBy);
+	ResponseEntity<ResponseStructure<UserResponseDto>> changeStatus(Long userId);
 }
